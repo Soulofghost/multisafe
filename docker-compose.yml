@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  multisafe:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: multisafe-treasury
+    ports:
+      - "8011:8011"
+    environment:
+      - PORT=8011
+      - MULTISAFE_DB=/app/backend/data/multisafe.db
+    volumes:
+      - treasury_data:/app/backend/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8011/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  treasury_data:
+    driver: local
